@@ -14,19 +14,19 @@ services:
       - "./sql:/docker-entrypoint-initdb.d"
   cassandra:
     image: cassandra:3
-    container_name: rockthejvm-sparkstreaming-cassandra
+    container_name: sparkstreaming-cassandra
     ports:
       - "7000:7000"
       - "9042:9042"
     environment:
       - "CASSANDRA_CLUSTER_NAME=OUR_DOCKERIZED_CASSANDRA_SINGLE_NODE_CLUSTER"
   zookeeper:
-    container_name: rockthejvm-sparkstreaming-zookeeper
+    container_name: sparkstreaming-zookeeper
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
   kafka:
-    container_name: rockthejvm-sparkstreaming-kafka
+    container_name: sparkstreaming-kafka
     image: wurstmeister/kafka
     ports:
       - "9092:9092"
