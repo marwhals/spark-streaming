@@ -106,11 +106,12 @@ object EventTimeWindows {
       .awaitTermination()
   }
 
-  /*
-    For window functions, windows start at Jan 1 1970, 12 AM GMT
+  /**
+   * TODO: Exercises
+   *
    */
 
   def main(args: Array[String]): Unit = {
-
+    aggregatePurchasesByTumblingWindow()
   }
 }
