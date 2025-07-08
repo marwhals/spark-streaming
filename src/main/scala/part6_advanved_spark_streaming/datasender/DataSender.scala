@@ -70,7 +70,30 @@ object DataSender {
     printer.println("10000,green")
   }
 
+
+  def statefulExample = {
+    Thread.sleep(2000)
+    printer.println("text,3,3000")        // batch 1
+    printer.println("text,4,5000")
+    printer.println("video,1,500000")
+    printer.println("audio,3,60000")
+
+    Thread.sleep(5000)
+    printer.println("text,1,2500")        // batch 2
+
+    Thread.sleep(5000)
+    printer.println("video,1,450000")     // batch 3
+    printer.println("text,2,4000")
+    printer.println("audio,2,20000")
+    printer.println("image,1,12000")
+
+    Thread.sleep(5000)
+    printer.println("video,3,1350000")    // batch 4
+    printer.println("text,5,6000")
+    printer.println("image,2,18000")
+  }
+
   def main(args: Array[String]): Unit = {
-    example1()
+    statefulExample
   }
 }

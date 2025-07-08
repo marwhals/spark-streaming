@@ -4,6 +4,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming.{StreamingQuery, Trigger}
+import utils.utils.ignoreLogs
 
 import java.io.PrintStream
 import java.net.ServerSocket
@@ -35,11 +36,7 @@ import scala.concurrent.duration._
 
 object Watermarks {
 
-  // Reduce log level for Spark
-  Logger.getLogger("org").setLevel(Level.ERROR)
-  Logger.getLogger("akka").setLevel(Level.ERROR)
-  Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
-  Logger.getRootLogger.setLevel(Level.ERROR)
+  ignoreLogs // Avoid outputting log4j statements
 
   val spark = SparkSession.builder()
     .appName("Late Data with Watermarks")
