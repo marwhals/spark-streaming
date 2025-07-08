@@ -8,7 +8,6 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 import java.io.{File, FileWriter}
 import java.sql.Date
 import java.text.SimpleDateFormat
-import scala.reflect.io.File
 
 /**
  * - DStreams - Discretized Streams
