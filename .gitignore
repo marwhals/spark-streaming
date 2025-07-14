@@ -49,3 +49,12 @@ build/
 ### Project specific
 #/src/main/data/
 /scripts/
+
+### Big text data file 50MB + - TODO - implement way avoid this automatically
+src/main/resources/data/people-1m/people-1m.txt
+
+#----- Useful keep for reference -----
+# git rm --cached src/main/resources/data/people-1m/people-1m.txt
+# echo "src/main/resources/data/people-1m/people-1m.txt" >> .gitignore
+# git commit -m "Stop tracking large file and add to .gitignore"
+# git push origin main
