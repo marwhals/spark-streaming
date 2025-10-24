@@ -53,7 +53,8 @@ object DStreamsWindowTransformations {
     readLines()
       .map(_.length)
       .reduceByWindow(_ + _, Seconds(10), Seconds(5))
-//    ----------------------^^^^^^^^^^^^^ each RDD has a single element obtained reducing past 10 seconds with this function
+
+  //    ----------------------^^^^^^^^^^^^^ each RDD has a single element obtained reducing past 10 seconds with this function
   // tumbling windows
   def linesByTumblingWindow() = readLines().window(Seconds(10), Seconds(10)) // batch of batches
 
@@ -68,14 +69,8 @@ object DStreamsWindowTransformations {
         (a, b) => a + b, // reduction function
         (a, b) => a - b, // "inverse" function --- to remove elements from the sliding window when they fall out of the window
         Seconds(60), // window duration
-        Seconds(30)  // sliding duration
+        Seconds(30) // sliding duration
       )
-  }
-
-  def main(args: Array[String]): Unit = {
-    linesByWindow().print()
-    ssc.start()
-    ssc.awaitTermination()
   }
 
   /**
@@ -92,5 +87,46 @@ object DStreamsWindowTransformations {
    * - use reduceByWindow
    * - use reduceByKeyAndWindow
    */
+
+  val moneyPerExpensiveWord = 2
+
+  def showMeTheMoney() = readLines()
+    .flatMap(line => line.split(" "))
+    .filter(_.length >= 10) // Filter based on requirement
+    .map(_ => moneyPerExpensiveWord)
+    .reduce(_ + _)
+    .window(Seconds(30), Seconds(10))
+    .reduce(_ + _)
+
+  def showMeTheMoney2() = readLines()
+    .flatMap(_.split(" "))
+    .filter(_.length >= 10)
+    .countByWindow(Seconds(30), Seconds(10))
+    .map(_ * moneyPerExpensiveWord)
+
+  def showMeTheMoney3() = readLines()
+    .flatMap(line => line.split(" "))
+    .filter(_.length >= 10)
+    .map(_ => moneyPerExpensiveWord)
+    .reduceByWindow(_ + _, Seconds(30), Seconds(10))
+
+  def showMeTheMoney4() = {
+    ssc.checkpoint("checkpoints")
+
+    readLines()
+      .flatMap(line => line.split(" "))
+      .filter(_.length >= 10)
+      .map { word =>
+        if (word.length >= 10) ("expensive", 2)
+        else ("cheap", 0)
+      }
+      .reduceByKeyAndWindow(_ + _, _ - _, Seconds(30), Seconds(10)) // second function is for removing elements from a window when they fall out of it.
+  }
+
+  def main(args: Array[String]): Unit = {
+    showMeTheMoney().print()
+    ssc.start()
+    ssc.awaitTermination()
+  }
 
 }

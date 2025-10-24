@@ -113,7 +113,6 @@ object DStreams {
     //transformations
     val dateFormat = new SimpleDateFormat("MMM d yyyy")
 
-
     val stocksStream: DStream[Stock] = textStream.map { line =>
       val tokens = line.split(",")
       val company = tokens(0)
@@ -132,7 +131,6 @@ object DStreams {
     ssc.awaitTermination()
 
   }
-
 
   def main(args: Array[String]): Unit = {
 //    readFromSocket()
