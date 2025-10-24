@@ -79,7 +79,7 @@ object DStreamsWindowTransformations {
   }
 
   /**
-   * TODO - Exercise.
+   * Exercise
    *
    * For a word longer than 10 chars you will get $2
    * Every other word you will get $0

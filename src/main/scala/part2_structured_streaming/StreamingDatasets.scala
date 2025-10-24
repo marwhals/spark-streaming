@@ -1,7 +1,7 @@
 package part2_structured_streaming
 
 import common.{Car, carsSchema}
-import org.apache.spark.sql.functions.{col, from_json}
+import org.apache.spark.sql.functions.{avg, col, from_json}
 import org.apache.spark.sql.{DataFrame, Dataset, Encoders, SparkSession}
 
 /**
@@ -58,16 +58,52 @@ object StreamingDatasets {
   }
 
   def main(args: Array[String]): Unit = {
-    showCarNames()
+//    ex1()
+//    ex2()
+    ex3()
   }
 
   /**
-   * TODO - Exercises
-   * * 1) Count how many powerful cars we have in the DS (HP > 140)
-   * * 2) Average HP for the entire dataset (use the complete output mode)
-   * * 3) Count the cars by origin
+   * Exercises
+   * 1) Count how many powerful cars we have in the DS (HP > 140)
+   * 2) Average HP for the entire dataset (use the complete output mode)
+   * 3) Count the cars by origin
    */
 
+  def ex1() = {
+    val carsDS = readCars()
+    carsDS.filter(_.Horsepower.getOrElse(0L) > 140)
+      .writeStream
+      .format("console")
+      .outputMode("append")
+      .start()
+      .awaitTermination()
+  }
+
+  def ex2() = {
+    val carsDS = readCars()
+    carsDS.select(avg(col("Horsepower")))
+      .writeStream
+      .format("console")
+      .outputMode("complete")
+      .start()
+      .awaitTermination()
+  }
+
+  def ex3() = {
+    val carsDS = readCars()
+
+    val carCountByOrigin = carsDS.groupBy(col("Origin")).count() // option 1
+
+    val carCountByOriginAlt = carsDS.groupByKey(car => car.Origin).count() // option 2 with the Dataset API
+
+    carCountByOriginAlt
+      .writeStream
+      .format("console")
+      .outputMode("complete")
+      .start()
+      .awaitTermination()
+  }
 
   /**
    * Summary

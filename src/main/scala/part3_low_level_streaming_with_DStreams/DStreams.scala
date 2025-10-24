@@ -22,10 +22,10 @@ import java.text.SimpleDateFormat
  *    - Essentially a distributed collection of elements of the same type
  *      - Functional operators e.g: map, flatMap, filter, reduce.
  *      - Accessors to each RDD
- *        ---> Mode advanced operators exist
+ *        ---> More advanced operators exist
  *
  *    - Needs a receiver to perform computations
- *      - One reciever per DStream
+ *      - One receiver per DStream
  *      - Fetches data from the source, sends to Spark, creates blocks.
  *      - Is managed by the StreamingContext on the driver
  *      - Occupies one core on the machine
