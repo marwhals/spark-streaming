@@ -2,6 +2,10 @@
 
 ---
 
+Useful Links: https://developer.x.com
+
+---
+
 ## Objective
 
 - Integrate any data source with Spark Streaming
