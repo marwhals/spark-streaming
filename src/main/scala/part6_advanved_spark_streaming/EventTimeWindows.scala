@@ -2,7 +2,7 @@ package part6_advanved_spark_streaming
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, from_json, sum, window}
-import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType, TimestampType}
+import org.apache.spark.sql.types._
 
 /**
  * - Handle records by event time
@@ -40,6 +40,12 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructT
  * --- window duration = 20 minutes
  * --- window sliding interval = 10 minutes
  *
+ *
+ * ---------
+ * CAn group streamed data into time-based groups
+ *
+ * Window duration and sliding interval must be a multiple of the batch interval
+ * Output mode will influence results
  */
 
 object EventTimeWindows {
@@ -107,11 +113,61 @@ object EventTimeWindows {
   }
 
   /**
-   * TODO: Exercises
+   * Exercises
+   * 1) Show the best selling product of the day and the quantity sold
+   * 2) Show the best selling product of every 24 hours, updated every hour
    *
    */
 
+  def bestSellingProductPerDay() = {
+    val purchasesDF = readPurchasesFromFile()
+
+    val bestSelling = purchasesDF
+      .groupBy(col("item"), window(col("time"), "1 day").as("day"))
+      .agg(sum("quantity").as("totalQuantity"))
+      .select(
+        col("day").getField("start").as("start"),
+        col("day").getField("end").as("end"),
+        col("item"),
+        col("totalQuantity")
+      )
+      .orderBy(col("day"), col("totalQuantity").desc)
+
+    bestSelling.writeStream
+      .format("console")
+      .outputMode("complete")
+      .start()
+      .awaitTermination()
+
+  }
+
+  /**
+   * For window functions, windows start at Jan 1 1970, 0 AM GMT
+   */
+  def bestSellingProductEvery24h() = {
+    val purchasesDF = readPurchasesFromFile()
+
+    val bestSelling = purchasesDF
+      .groupBy(col("item"), window(col("time"), "1 day", "1 hour").as("time"))
+      .agg(sum("quantity").as("totalQuantity"))
+      .select(
+        col("time").getField("start").as("start"),
+        col("time").getField("end").as("end"),
+        col("item"),
+        col("totalQuantity")
+      )
+      .orderBy(col("start"), col("totalQuantity").desc)
+
+    bestSelling.writeStream
+      .format("console")
+      .outputMode("complete")
+      .start()
+      .awaitTermination()
+  }
+
   def main(args: Array[String]): Unit = {
-    aggregatePurchasesByTumblingWindow()
+//    aggregatePurchasesByTumblingWindow()
+//    bestSellingProductPerDay()
+    bestSellingProductEvery24h()
   }
 }
